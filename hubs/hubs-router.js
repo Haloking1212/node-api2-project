@@ -34,6 +34,21 @@ router.get("/api/posts/:id", (req, res) => {
     })
 })
 
+router.get("/api/posts/:id/comments", (req,res) => {
+    Hubs.findPostComments(req.params.id)
+    .then(hub => {
+        if(hub){
+            return res.status(200).json(hub)
+         } else {
+             res.status(404).json({ message: "The post with the specified ID does not exist." })
+         }
+    })
+    .catch(error => {
+        console.log(error);
+        res.status(500).json({ error: "The post information could not be retrieved." })
+    })
+})
+
 //POST request
 
 router.post("/api/posts", (req, res) => {
@@ -52,7 +67,11 @@ router.post("/api/posts", (req, res) => {
 })
 
 router.post("/api/posts/:id/comments", (req, res) => {
-    const { text, post_id } = req.body
+    const { text } = req.body
+    const post_id = req.params.id
+    console.log('this is the text', text);
+    console.log('this is the post id', post_id);
+    
     if(!text || !post_id) {
         return res.status(404).json({ message: "The post with the specified ID does not exist." })
     }
